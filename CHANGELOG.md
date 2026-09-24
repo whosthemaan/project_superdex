@@ -18,6 +18,10 @@ All notable changes to this repository will be documented here.
   crushing or dropping it, while water is poured in (simulated as a growing mass, drawn
   as a pour), with fingertip tactile observations, ablation variants, a PPO training
   recipe, and scripted grip baselines (`superdex_lab/apps/envs/run_fr3_revo2_fill.py`).
+- Added the `superdex_gym/Fr3Revo2Jenga-v0` environment: find the loose block of a Jenga
+  level by touch and push it out without disturbing the tower, with Cartesian fingertip
+  control, ablation variants, a PPO training recipe, and scripted probing baselines
+  (`superdex_lab/apps/envs/run_fr3_revo2_jenga.py`).
 - Added `superdex.lab.gym.utils.render_materials`, which paints render-model material
   colors in the default viewer.
 - Fixed `AttachBot` dropping the attached bot's linear transmissions and spatial tendons

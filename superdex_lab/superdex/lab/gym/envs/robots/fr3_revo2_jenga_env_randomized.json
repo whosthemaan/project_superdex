@@ -1,0 +1,8 @@
+{
+  "description": "Domain randomization for sim-to-real: noisy fingertip forces, noisier block tracking, and a wider tower placement.",
+  "env_cfg": {
+    "tactile_noise_std": 0.1,
+    "vision_noise_std": 0.001,
+    "tower_xy_noise": 0.01
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "description": "Noise-free block and tower tracking: an upper bound for what a camera could add.",
+  "env_cfg": {
+    "vision_noise_std": 0.0
+  }
+}

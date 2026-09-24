@@ -1,0 +1,6 @@
+{
+  "description": "Ablation: no fingertip sensors in the observation. The policy can only tell a load-bearing block by watching the tower move.",
+  "env_cfg": {
+    "observe_tactile": false
+  }
+}

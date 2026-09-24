@@ -95,3 +95,34 @@ Scripted baselines, 12 episodes each:
 | tactile (squeeze follows the load the fingertips sense) | 11 | 6.3 N |
 
 Episodes run at about real time on one core (10 s simulated in ~8 s).
+
+### Jenga: push the loose block out by touch
+
+`superdex_gym/Fr3Revo2Jenga-v0` is a tactile probing task. A tower of 1.5x Jenga blocks
+(9 levels) stands on the table; the Revo2 points its index finger at level 4, where one
+of the three blocks is 1 mm thinner and carries no load. The policy moves the fingertip
+(3D, Cartesian; inverse kinematics holds the hand's orientation) and has to push a
+load-free block 35 mm in without moving the rest of the tower by more than 4 mm. Blocks
+look alike and the loose one changes every episode: pressing a load-bearing block reads
+3-10 N on the fingertip within its first millimeter, a load-free one 0.1-2 N, so the
+policy can tell them apart before the tower moves. The block and tower positions it
+observes carry 0.5 mm of camera-like noise.
+
+Variants: `Fr3Revo2JengaRandomized` (sensor noise, noisier tracking, wider tower
+placement), and two ablations: `Fr3Revo2JengaNoTouch` (no tactile observation: it can
+only watch the tower move) and `Fr3Revo2JengaPerfectVision` (noise-free tracking).
+
+```bash
+uv run --no-project superdex_lab/apps/envs/run_fr3_revo2_jenga.py --render   # baselines
+cd superdex_lab/apps/rllib && python train_samples.py -p fr3_revo2_jenga     # PPO
+```
+
+Scripted baselines, 12 episodes each:
+
+| Strategy | Succeeded | Tower moved (mean / max) |
+|---|---|---|
+| blind: push the middle block | 6 | 2.1 / 4.7 mm |
+| vision: probe blocks, back off when the camera sees the tower move | 11 | 1.5 / 4.1 mm |
+| tactile: probe blocks, back off when the fingertip force rises | 12 | 0.4 / 1.2 mm |
+
+Steps take ~33 ms on one core (the bottom 3 levels are fixed, and physics runs at 125 Hz).

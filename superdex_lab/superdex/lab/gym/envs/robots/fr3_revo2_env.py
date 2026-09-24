@@ -351,15 +351,15 @@ class Fr3Revo2Env(MochiEnv):
         prefab.default_pose = pose
         bot = mochi_helpers.create_bot(scene, prefab, context)
         try:
-            controller = Fr3Revo2Env._create_controller(bot)
+            controller = cls._create_controller(bot)
             sensors = find_tactile_pad_sensors(bot, context)
             sensors = {name.removesuffix("_tactile"): s for name, s in sensors.items()}
             missing = set(FINGERS) - set(sensors)
             if missing:
                 raise RuntimeError(f"missing tactile sensors: {sorted(missing)}")
 
-            Fr3Revo2Env._create_table(scene, cfg)
-            obj, center, rest_z, sdf = Fr3Revo2Env._create_object(scene, cfg)
+            cls._create_table(scene, cfg)
+            obj, center, rest_z, sdf = cls._create_object(scene, cfg)
             target = SdfProximityTarget(obj, sdf)
             for sensor in sensors.values():
                 sensor.set_proximity_targets([target])
@@ -513,7 +513,17 @@ class Fr3Revo2Env(MochiEnv):
             self.arm_home(cfg.hand_side)
         ) + self.np_random.uniform(-cfg.arm_pose_noise, cfg.arm_pose_noise, 7)
         super()._reset_scene()
+        self._reset_object()
 
+        self._target = self._initial_pose.astype(np.float64)
+        self._goal = self._target.copy()
+        self._apply_targets()
+        for sensor in self._sensors.values():
+            sensor.reset()
+
+    def _reset_object(self):
+        """Place the object on the table at the start of an episode."""
+        cfg = self._cfg
         xy = np.asarray(cfg.object_xy) + self.np_random.uniform(
             -cfg.object_xy_noise, cfg.object_xy_noise, 2
         )
@@ -525,12 +535,6 @@ class Fr3Revo2Env(MochiEnv):
             )
         )
         self._object.set_velocity([0, 0, 0], [0, 0, 0])
-
-        self._target = self._initial_pose.astype(np.float64)
-        self._goal = self._target.copy()
-        self._apply_targets()
-        for sensor in self._sensors.values():
-            sensor.reset()
 
     ####################################################################################
     # Stepping
